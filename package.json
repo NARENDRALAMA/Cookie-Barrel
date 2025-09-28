@@ -1,0 +1,35 @@
+{
+  "name": "cookie-barrel-ordering",
+  "version": "1.0.0",
+  "description": "Digital ordering system for The Cookie Barrel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx,ts,tsx"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "lucide-react": "^0.263.1",
+    "clsx": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2",
+    "vite": "^4.4.0"
+  },
+  "keywords": ["cookie", "ordering", "restaurant", "whatsapp"],
+  "author": "Cookie Barrel Team",
+  "license": "MIT"
+}
