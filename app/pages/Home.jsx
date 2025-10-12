@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import {
   Cookie,
   Clock,
@@ -154,14 +156,14 @@ const Home = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
-                to="/menu"
+                href="/menu"
                 className="btn-primary text-lg px-10 py-4 inline-flex items-center space-x-2"
               >
                 <Cookie className="h-5 w-5" />
                 <span>Order Now</span>
               </Link>
               <Link
-                to="/register"
+                href="/register"
                 className="btn-secondary text-lg px-10 py-4 inline-flex items-center space-x-2"
               >
                 <Users className="h-5 w-5" />
@@ -326,7 +328,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link
-              to="/menu"
+              href="/menu"
               className="btn-primary text-lg px-8 py-4 inline-flex items-center space-x-2"
             >
               <span>View Full Menu</span>
@@ -395,14 +397,14 @@ const Home = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Link
-                to="/menu"
+                href="/menu"
                 className="bg-white text-orange-600 hover:bg-gray-100 font-bold py-4 px-10 rounded-xl shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:scale-105 text-lg inline-flex items-center justify-center space-x-2"
               >
                 <ChefHat className="h-5 w-5" />
                 <span>Browse Menu</span>
               </Link>
               <Link
-                to="/register"
+                href="/register"
                 className="border-2 border-white text-white hover:bg-white hover:text-orange-600 font-bold py-4 px-10 rounded-xl shadow-2xl transition-all duration-300 transform hover:scale-105 text-lg inline-flex items-center justify-center space-x-2"
               >
                 <Users className="h-5 w-5" />

@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import {
@@ -19,17 +22,17 @@ const Navbar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, logout } = useAuth();
-  const { cart } = useCart();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { getCartItemsCount } = useCart();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     logout();
     setIsUserMenuOpen(false);
-    navigate("/");
+    router.push("/");
   };
 
-  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartItemCount = getCartItemsCount();
 
   // Handle scroll effect
   useEffect(() => {
@@ -44,10 +47,10 @@ const Navbar = () => {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
-  }, [location]);
+  }, [pathname]);
 
   const isActive = (path) => {
-    return location.pathname === path;
+    return pathname === path;
   };
 
   return (
@@ -59,7 +62,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
+          <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
               <div className="relative bg-gradient-to-r from-orange-600 to-red-600 p-2 rounded-full shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -79,7 +82,7 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             <Link
-              to="/"
+              href="/"
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 ${
                 isActive("/")
                   ? "bg-orange-100 text-orange-600"
@@ -90,7 +93,7 @@ const Navbar = () => {
               <span>Home</span>
             </Link>
             <Link
-              to="/menu"
+              href="/menu"
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 ${
                 isActive("/menu")
                   ? "bg-orange-100 text-orange-600"
@@ -101,7 +104,7 @@ const Navbar = () => {
               <span>Menu</span>
             </Link>
             <Link
-              to="/track-order"
+              href="/track-order"
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 ${
                 isActive("/track-order")
                   ? "bg-orange-100 text-orange-600"
@@ -111,9 +114,9 @@ const Navbar = () => {
               <Package className="h-4 w-4" />
               <span>Track Order</span>
             </Link>
-            {user?.isAdmin && (
+            {user?.role === "admin" && (
               <Link
-                to="/admin"
+                href="/admin"
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   isActive("/admin")
                     ? "bg-orange-100 text-orange-600"
@@ -129,7 +132,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {/* Cart Button */}
             <Link
-              to="/cart"
+              href="/cart"
               className="relative p-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-xl transition-all duration-200 group"
             >
               <ShoppingCart className="h-6 w-6" />
@@ -174,7 +177,7 @@ const Navbar = () => {
                         </p>
                       </div>
                       <Link
-                        to="/track-order"
+                        href="/track-order"
                         className="flex items-center space-x-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
@@ -195,12 +198,12 @@ const Navbar = () => {
             ) : (
               <div className="hidden md:flex items-center space-x-3">
                 <Link
-                  to="/login"
+                  href="/login"
                   className="px-5 py-2 text-gray-700 hover:text-orange-600 font-medium rounded-lg hover:bg-orange-50 transition-all duration-200"
                 >
                   Login
                 </Link>
-                <Link to="/register" className="btn-primary">
+                <Link href="/register" className="btn-primary">
                   Sign Up
                 </Link>
               </div>
@@ -225,7 +228,7 @@ const Navbar = () => {
           <div className="md:hidden pb-4">
             <div className="pt-4 space-y-2 bg-white/50 backdrop-blur-sm rounded-2xl p-4 mt-4 border border-gray-100">
               <Link
-                to="/"
+                href="/"
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all ${
                   isActive("/")
                     ? "bg-orange-100 text-orange-600"
@@ -236,7 +239,7 @@ const Navbar = () => {
                 <span>Home</span>
               </Link>
               <Link
-                to="/menu"
+                href="/menu"
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all ${
                   isActive("/menu")
                     ? "bg-orange-100 text-orange-600"
@@ -247,7 +250,7 @@ const Navbar = () => {
                 <span>Menu</span>
               </Link>
               <Link
-                to="/track-order"
+                href="/track-order"
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all ${
                   isActive("/track-order")
                     ? "bg-orange-100 text-orange-600"
@@ -257,9 +260,9 @@ const Navbar = () => {
                 <Package className="h-5 w-5" />
                 <span>Track Order</span>
               </Link>
-              {user?.isAdmin && (
+              {user?.role === "admin" && (
                 <Link
-                  to="/admin"
+                  href="/admin"
                   className={`flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all ${
                     isActive("/admin")
                       ? "bg-orange-100 text-orange-600"
@@ -274,14 +277,14 @@ const Navbar = () => {
               {!user ? (
                 <>
                   <Link
-                    to="/login"
+                    href="/login"
                     className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-orange-50 font-medium transition-all"
                   >
                     <User className="h-5 w-5" />
                     <span>Login</span>
                   </Link>
                   <Link
-                    to="/register"
+                    href="/register"
                     className="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold shadow-lg"
                   >
                     <User className="h-5 w-5" />

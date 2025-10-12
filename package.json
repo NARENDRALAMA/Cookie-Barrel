@@ -2,34 +2,45 @@
   "name": "cookie-barrel-ordering",
   "version": "1.0.0",
   "description": "Digital ordering system for The Cookie Barrel",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext js,jsx,ts,tsx"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
+    "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0",
+    "mongoose": "^7.5.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "express-validator": "^7.0.1",
     "lucide-react": "^0.263.1",
-    "clsx": "^2.0.0"
+    "clsx": "^2.0.0",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.45.0",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.3",
+    "eslint-config-next": "^14.0.0",
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.4.0"
+    "typescript": "^5.0.0"
   },
-  "keywords": ["cookie", "ordering", "restaurant", "whatsapp"],
+  "keywords": [
+    "cookie",
+    "ordering",
+    "restaurant",
+    "nextjs",
+    "mobile-ready"
+  ],
   "author": "Cookie Barrel Team",
   "license": "MIT"
 }

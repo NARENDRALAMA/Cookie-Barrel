@@ -13,6 +13,11 @@ import {
   Eye,
   Edit,
   Trash2,
+  Search,
+  Filter,
+  Download,
+  ChevronDown,
+  Sparkles,
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -21,6 +26,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Mock data
   useEffect(() => {
@@ -122,15 +128,15 @@ const AdminDashboard = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "ordered":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "preparing":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case "ready":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border-green-200";
       case "delivered":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -158,11 +164,15 @@ const AdminDashboard = () => {
   };
 
   const deleteOrder = (orderId) => {
-    setOrders((prev) => prev.filter((order) => order.id !== orderId));
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      setOrders((prev) => prev.filter((order) => order.id !== orderId));
+    }
   };
 
   const deleteUser = (userId) => {
-    setUsers((prev) => prev.filter((user) => user.id !== userId));
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+    }
   };
 
   const stats = {
@@ -172,20 +182,101 @@ const AdminDashboard = () => {
     totalCustomers: users.length,
   };
 
+  const statCards = [
+    {
+      title: "Total Orders",
+      value: stats.totalOrders,
+      icon: <Package className="h-8 w-8" />,
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-100",
+      change: "+12%",
+    },
+    {
+      title: "Total Revenue",
+      value: `$${stats.totalRevenue.toFixed(2)}`,
+      icon: <DollarSign className="h-8 w-8" />,
+      color: "from-green-500 to-green-600",
+      bgColor: "bg-green-100",
+      change: "+8.5%",
+    },
+    {
+      title: "Active Orders",
+      value: stats.activeOrders,
+      icon: <Clock className="h-8 w-8" />,
+      color: "from-yellow-500 to-yellow-600",
+      bgColor: "bg-yellow-100",
+      change: "+3",
+    },
+    {
+      title: "Total Customers",
+      value: stats.totalCustomers,
+      icon: <Users className="h-8 w-8" />,
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-100",
+      change: "+5",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-orange-50/50 via-white to-red-50/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">
-            Manage orders, customers, and business operations
-          </p>
+        <div className="mb-8 animate-fadeIn">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center">
+                <span className="gradient-text">Admin Dashboard</span>
+                <Sparkles className="h-8 w-8 ml-3 text-orange-600" />
+              </h1>
+              <p className="text-gray-600 text-lg">
+                Manage orders, customers, and business operations
+              </p>
+            </div>
+            <button className="btn-primary flex items-center space-x-2">
+              <Download className="h-5 w-5" />
+              <span>Export Data</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {statCards.map((stat, index) => (
+            <div
+              key={index}
+              className="card card-hover relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 transform translate-x-8 -translate-y-8 opacity-10">
+                <div
+                  className={`w-full h-full rounded-full bg-gradient-to-br ${stat.color}`}
+                ></div>
+              </div>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                    <div
+                      className={`bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`}
+                    >
+                      {stat.icon}
+                    </div>
+                  </div>
+                  <span className="text-green-600 font-semibold text-sm flex items-center">
+                    <TrendingUp className="h-4 w-4 mr-1" />
+                    {stat.change}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-gray-600 mb-1">
+                  {stat.title}
+                </p>
+                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
-          <nav className="flex space-x-8 px-6">
+        <div className="glass rounded-2xl shadow-xl mb-8 overflow-hidden">
+          <nav className="flex space-x-1 p-2">
             {[
               {
                 id: "overview",
@@ -206,10 +297,10 @@ const AdminDashboard = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                   activeTab === tab.id
-                    ? "border-primary-500 text-primary-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? "bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg"
+                    : "text-gray-600 hover:bg-orange-50"
                 }`}
               >
                 {tab.icon}
@@ -222,104 +313,46 @@ const AdminDashboard = () => {
         {/* Content */}
         {activeTab === "overview" && (
           <div className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="card">
-                <div className="flex items-center">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Package className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Orders
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.totalOrders}
-                    </p>
-                  </div>
-                </div>
+            {/* Recent Orders Table */}
+            <div className="glass rounded-3xl p-8 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Recent Orders
+                </h2>
+                <button className="text-orange-600 hover:text-orange-700 font-semibold text-sm flex items-center">
+                  View All
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                </button>
               </div>
-
-              <div className="card">
-                <div className="flex items-center">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <DollarSign className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Revenue
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      ${stats.totalRevenue.toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card">
-                <div className="flex items-center">
-                  <div className="p-2 bg-yellow-100 rounded-lg">
-                    <Clock className="h-6 w-6 text-yellow-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Active Orders
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.activeOrders}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card">
-                <div className="flex items-center">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Users className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">
-                      Total Customers
-                    </p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {stats.totalCustomers}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Orders */}
-            <div className="card">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Recent Orders
-              </h2>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                         Order
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                         Customer
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                         Total
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-100">
                     {orders.slice(0, 5).map((order) => (
-                      <tr key={order.id}>
+                      <tr
+                        key={order.id}
+                        className="hover:bg-orange-50/50 transition-colors"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-bold text-gray-900">
                             {order.orderNumber}
                           </div>
                           <div className="text-sm text-gray-500">
@@ -327,7 +360,7 @@ const AdminDashboard = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-semibold text-gray-900">
                             {order.customerName}
                           </div>
                           <div className="text-sm text-gray-500">
@@ -336,25 +369,27 @@ const AdminDashboard = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
                               order.status
                             )}`}
                           >
                             {getStatusIcon(order.status)}
-                            <span className="ml-1 capitalize">
+                            <span className="ml-2 capitalize">
                               {order.status}
                             </span>
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          ${order.total.toFixed(2)}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="text-sm font-bold text-gray-900">
+                            ${order.total.toFixed(2)}
+                          </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex space-x-2">
-                            <button className="text-blue-600 hover:text-blue-900">
+                            <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                               <Eye className="h-4 w-4" />
                             </button>
-                            <button className="text-green-600 hover:text-green-900">
+                            <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
                               <Edit className="h-4 w-4" />
                             </button>
                           </div>
@@ -369,49 +404,73 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === "orders" && (
-          <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">
-              Order Management
-            </h2>
+          <div className="glass rounded-3xl p-8 shadow-xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Order Management
+              </h2>
+              <div className="flex space-x-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Search orders..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
+                  />
+                </div>
+                <button className="flex items-center space-x-2 px-4 py-2 border-2 border-gray-200 rounded-xl hover:border-orange-500 transition-colors">
+                  <Filter className="h-5 w-5" />
+                  <span className="font-medium">Filter</span>
+                </button>
+              </div>
+            </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Order Details
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {orders.map((order) => (
-                    <tr key={order.id}>
+                    <tr
+                      key={order.id}
+                      className="hover:bg-orange-50/50 transition-colors"
+                    >
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-bold text-gray-900">
                           {order.orderNumber}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 mb-1">
                           {order.date}
                         </div>
-                        <div className="text-sm text-gray-600 mt-1">
+                        <div className="text-xs text-gray-600 space-y-1">
                           {order.items.map((item, index) => (
-                            <div key={index}>{item}</div>
+                            <div key={index} className="flex items-center">
+                              <span className="inline-block w-1.5 h-1.5 bg-orange-600 rounded-full mr-2"></span>
+                              {item}
+                            </div>
                           ))}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-semibold text-gray-900">
                           {order.customerName}
                         </div>
                         <div className="text-sm text-gray-500">
@@ -424,7 +483,7 @@ const AdminDashboard = () => {
                           onChange={(e) =>
                             updateOrderStatus(order.id, e.target.value)
                           }
-                          className="text-sm border border-gray-300 rounded px-2 py-1"
+                          className="px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none cursor-pointer"
                         >
                           <option value="ordered">Ordered</option>
                           <option value="preparing">Preparing</option>
@@ -432,20 +491,22 @@ const AdminDashboard = () => {
                           <option value="delivered">Delivered</option>
                         </select>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ${order.total.toFixed(2)}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm font-bold text-gray-900">
+                          ${order.total.toFixed(2)}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900">
+                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button className="text-green-600 hover:text-green-900">
+                          <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => deleteOrder(order.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -460,37 +521,55 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === "customers" && (
-          <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">
-              Customer Management
-            </h2>
+          <div className="glass rounded-3xl p-8 shadow-xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Customer Management
+              </h2>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  type="text"
+                  placeholder="Search customers..."
+                  className="pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
+                />
+              </div>
+            </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Contact
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Orders
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Total Spent
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {users.map((user) => (
-                    <tr key={user.id}>
+                    <tr
+                      key={user.id}
+                      className="hover:bg-orange-50/50 transition-colors"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.name}
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                            {user.name.charAt(0)}
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900">
+                            {user.name}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -501,23 +580,27 @@ const AdminDashboard = () => {
                           {user.phone}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.orders}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                          {user.orders} orders
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ${user.totalSpent.toFixed(2)}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm font-bold text-gray-900">
+                          ${user.totalSpent.toFixed(2)}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900">
+                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button className="text-green-600 hover:text-green-900">
+                          <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => deleteUser(user.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -536,6 +619,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
-
-

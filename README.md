@@ -1,46 +1,79 @@
-# 🍪 Cookie Barrel - Digital Ordering System
+# Cookie Barrel - Digital Ordering System
 
-A modern, responsive web application for The Cookie Barrel's digital ordering system, featuring WhatsApp integration and comprehensive order management.
+A modern, full-stack digital ordering system built with Next.js, featuring seamless frontend-backend integration and mobile app readiness.
 
 ## 🚀 Features
 
-### Customer Features
+- **Full-Stack Next.js Application** - Unified frontend and backend in one project
+- **Mobile-Ready API** - RESTful API designed for mobile app consumption
+- **Real-time Order Tracking** - Track orders with status updates
+- **User Authentication** - Secure JWT-based authentication
+- **Shopping Cart** - Persistent cart with localStorage
+- **Admin Dashboard** - Complete order management system
+- **Responsive Design** - Mobile-first design with Tailwind CSS
+- **MongoDB Integration** - Scalable database with Mongoose ODM
 
-- **User Authentication**: Secure registration and login system
-- **Product Browsing**: Browse cookies with filtering and search capabilities
-- **Shopping Cart**: Add, remove, and manage items with quantity controls
-- **Order Placement**: Complete checkout process with promo codes
-- **Order Tracking**: Real-time order status updates
-- **WhatsApp Integration**: Receive order updates and support via WhatsApp
+## 🛠 Tech Stack
 
-### Admin Features
+### Frontend
 
-- **Dashboard Overview**: Key metrics and statistics
-- **Order Management**: View, update, and manage all orders
-- **Customer Management**: Manage customer accounts and data
-- **Real-time Updates**: Monitor order progress and status changes
+- **Next.js 14** - React framework with App Router
+- **React 18** - UI library
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide React** - Beautiful icons
 
-## 🛠️ Technology Stack
+### Backend
 
-- **Frontend**: React 18 with Vite
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Routing**: React Router DOM
-- **State Management**: React Context API
-- **Build Tool**: Vite
+- **Next.js API Routes** - Serverless API endpoints
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB object modeling
+- **JWT** - JSON Web Tokens for authentication
+- **bcryptjs** - Password hashing
 
-## 📋 Prerequisites
+### Mobile Ready
 
-- Node.js (version 16 or higher)
-- npm or yarn package manager
+- **RESTful API** - Clean API design for mobile apps
+- **CORS Support** - Cross-origin resource sharing
+- **Rate Limiting** - API protection
+- **Comprehensive Documentation** - Mobile API guide included
 
-## 🚀 Installation & Setup
+## 📁 Project Structure
+
+```
+Cookie Barrel/
+├── app/                          # Next.js App Router
+│   ├── api/                     # API Routes
+│   │   ├── auth/               # Authentication endpoints
+│   │   ├── products/           # Product management
+│   │   ├── orders/             # Order management
+│   │   └── health/             # Health check
+│   ├── components/             # Reusable components
+│   ├── context/                # React Context providers
+│   ├── pages/                  # Page components
+│   ├── globals.css             # Global styles
+│   └── layout.js               # Root layout
+├── lib/                        # Utility libraries
+│   ├── models/                 # Database models
+│   └── mongodb.js              # Database connection
+├── MOBILE_API_GUIDE.md         # Mobile integration guide
+└── README.md                   # This file
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB (local or cloud)
+- npm or yarn
+
+### Installation
 
 1. **Clone the repository**
 
    ```bash
    git clone <repository-url>
-   cd cookie-barrel-ordering
+   cd cookie-barrel
    ```
 
 2. **Install dependencies**
@@ -49,182 +82,201 @@ A modern, responsive web application for The Cookie Barrel's digital ordering sy
    npm install
    ```
 
-3. **Start the development server**
+3. **Environment Setup**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Update `.env.local` with your configuration:
+
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/cookie-barrel
+   JWT_SECRET=your-super-secret-jwt-key
+   NODE_ENV=development
+   ```
+
+4. **Start MongoDB**
+
+   ```bash
+   # If using local MongoDB
+   mongod
+   ```
+
+5. **Run the development server**
 
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:3000`
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🏗️ Project Structure
+## 📱 Mobile App Integration
+
+The API is designed to be mobile-friendly. Check out the comprehensive [Mobile API Guide](./MOBILE_API_GUIDE.md) for:
+
+- Complete API documentation
+- React Native integration examples
+- Flutter integration examples
+- Authentication flow
+- Error handling patterns
+
+### API Base URL
 
 ```
-src/
-├── components/          # Reusable UI components
-│   └── Navbar.jsx     # Navigation component
-├── context/            # React Context for state management
-│   ├── AuthContext.jsx # Authentication state
-│   └── CartContext.jsx # Shopping cart state
-├── pages/              # Page components
-│   ├── Home.jsx        # Landing page
-│   ├── Menu.jsx        # Product catalog
-│   ├── Cart.jsx        # Shopping cart
-│   ├── Login.jsx       # User login
-│   ├── Register.jsx    # User registration
-│   ├── OrderTracking.jsx # Order status tracking
-│   └── AdminDashboard.jsx # Admin panel
-├── App.jsx             # Main application component
-├── main.jsx            # Application entry point
-└── index.css           # Global styles and Tailwind imports
+Development: http://localhost:3000/api
+Production: https://your-domain.com/api
 ```
 
-## 🎯 Key Features Implementation
+## 🔧 Available Scripts
 
-### WhatsApp Integration
+```bash
+# Development
+npm run dev          # Start development server
 
-- Simulated WhatsApp Business API integration
-- Order confirmation messages
-- Real-time status updates
-- Customer support chat integration
+# Production
+npm run build        # Build for production
+npm run start        # Start production server
 
-### Order Management
+# Linting
+npm run lint         # Run ESLint
+```
 
-- Complete order lifecycle tracking
-- Status updates (Ordered → Preparing → Ready → Delivered)
-- Admin order management interface
-- Customer order history
+## 🗄 Database Models
 
-### User Experience
+### User
 
-- Responsive design for all devices
-- Intuitive navigation and user flow
-- Modern UI with smooth animations
-- Accessibility considerations
+- Authentication and profile information
+- Address management
+- Role-based access (customer/admin)
 
-## 🔐 Demo Accounts
+### Product
 
-### Regular User
+- Menu items with categories
+- Pricing and inventory
+- Images and descriptions
+- Nutritional information
 
-- **Email**: Any email address
-- **Password**: Any password (6+ characters)
+### Order
 
-### Admin User
+- Order management and tracking
+- Payment status
+- Delivery information
+- Order history
 
-- **Email**: Any email containing "admin"
-- **Password**: Any password (6+ characters)
+## 🔐 Authentication
 
-## 📱 Responsive Design
+The system uses JWT tokens for authentication:
 
-The application is fully responsive and optimized for:
+1. **Register/Login** - Get JWT token
+2. **Include token** - Add to Authorization header
+3. **Protected routes** - Automatically verified
 
-- Desktop computers
-- Tablets
-- Mobile phones
-- Various screen sizes and orientations
+```javascript
+// Example API call with authentication
+const response = await fetch("/api/orders", {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+});
+```
 
 ## 🎨 Customization
 
-### Colors
-
-The application uses a custom color palette defined in `tailwind.config.js`:
-
-- **Primary**: Orange tones for main actions
-- **Cookie**: Brown tones for cookie-themed elements
-- **Standard**: Gray scale for text and backgrounds
-
 ### Styling
 
-- Custom CSS classes in `src/index.css`
-- Tailwind utility classes for rapid development
-- Consistent spacing and typography system
+- Modify `app/globals.css` for global styles
+- Update `tailwind.config.js` for theme customization
+- Use Tailwind utility classes throughout components
+
+### API Endpoints
+
+- Add new endpoints in `app/api/`
+- Follow RESTful conventions
+- Include proper error handling
+
+### Database
+
+- Modify models in `lib/models/`
+- Add new fields or relationships
+- Update validation rules
 
 ## 🚀 Deployment
 
-### Build for Production
+### Vercel (Recommended)
 
-```bash
-npm run build
+1. Connect your GitHub repository
+2. Set environment variables
+3. Deploy automatically
+
+### Other Platforms
+
+- **Netlify** - Static site hosting
+- **Railway** - Full-stack deployment
+- **DigitalOcean** - VPS deployment
+
+### Environment Variables for Production
+
+```env
+MONGODB_URI=your-production-mongodb-uri
+JWT_SECRET=your-production-jwt-secret
+NODE_ENV=production
 ```
 
-### Preview Production Build
+## 📊 API Endpoints
 
-```bash
-npm run preview
-```
+### Authentication
 
-### Deploy to Static Hosting
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
 
-The built files in the `dist/` folder can be deployed to:
+### Products
 
-- Vercel
-- Netlify
-- GitHub Pages
-- Any static hosting service
+- `GET /api/products` - Get products (with filters)
+- `POST /api/products` - Create product (admin)
 
-## 🔧 Development
+### Orders
 
-### Available Scripts
+- `GET /api/orders` - Get user orders
+- `POST /api/orders` - Create order
+- `GET /api/orders/[id]` - Get single order
+- `PUT /api/orders/[id]` - Update order status
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+### Health
 
-### Code Style
-
-- ESLint configuration for code quality
-- Consistent formatting and naming conventions
-- Component-based architecture
-- Proper error handling and validation
-
-## 📊 Future Enhancements
-
-- **Backend Integration**: Connect to real API endpoints
-- **Payment Processing**: Integrate payment gateways
-- **Inventory Management**: Real-time stock tracking
-- **Analytics**: Advanced reporting and insights
-- **Mobile App**: React Native mobile application
-- **Real-time Chat**: Live customer support
-- **Push Notifications**: Browser and mobile notifications
+- `GET /api/health` - API health check
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Add tests if applicable
 5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 👥 Team
+## 🆘 Support
 
-- **Narendra Lama** - Backend and Cloud Integration
-- **Pratik Bhandari** - Mobile App Development
-- **Sagar Gurung** - WhatsApp & POS Integration
+For support or questions:
 
-## 📞 Support
+- Check the [Mobile API Guide](./MOBILE_API_GUIDE.md)
+- Review the API documentation
+- Open an issue on GitHub
 
-For support or questions about this project:
+## 🔮 Future Enhancements
 
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation
+- [ ] Real-time notifications with WebSockets
+- [ ] Payment gateway integration
+- [ ] WhatsApp integration for order updates
+- [ ] Advanced analytics dashboard
+- [ ] Multi-language support
+- [ ] Push notifications for mobile apps
 
 ---
 
-**Note**: This is a prototype/demo application. In production, you would need to:
-
-- Implement proper backend services
-- Add real database connections
-- Integrate with actual WhatsApp Business API
-- Implement proper security measures
-- Add comprehensive testing
-- Set up monitoring and logging
-
-
-
+Built with ❤️ for modern digital ordering systems
