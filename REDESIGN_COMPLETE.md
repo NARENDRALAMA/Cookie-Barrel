@@ -325,3 +325,8 @@ Your Cookie Barrel website has been transformed from a basic web app into a **pr
 
 _Redesign completed with love and attention to detail_ ❤️
 
+
+
+
+
+

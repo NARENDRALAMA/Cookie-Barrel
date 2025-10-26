@@ -158,8 +158,13 @@ export async function POST(request) {
 
     const finalAmount = totalAmount + deliveryFee + tax;
 
+    // Generate order number
+    const count = await Order.countDocuments();
+    const orderNumber = `CB${String(count + 1).padStart(6, "0")}`;
+
     // Create order
     const order = new Order({
+      orderNumber,
       customer: user.userId,
       items: orderItems,
       totalAmount,
