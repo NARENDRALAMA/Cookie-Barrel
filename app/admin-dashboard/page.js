@@ -20,6 +20,7 @@ export default function ManagerDashboard() {
   const [products, setProducts] = useState([]);
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [showLogoutMenu, setShowLogoutMenu] = useState(false);
 
   // Define functions BEFORE useEffect
   const fetchOrders = async (token) => {
@@ -129,7 +130,24 @@ export default function ManagerDashboard() {
       localStorage.removeItem("user");
       router.push("/manager-login");
     }
-  }, [router]);
+  }, [router, fetchOrders, fetchProducts]);
+
+  // Close logout menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showLogoutMenu && !event.target.closest('.logout-menu-container')) {
+        setShowLogoutMenu(false);
+      }
+    };
+
+    if (showLogoutMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLogoutMenu]);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -241,14 +259,26 @@ export default function ManagerDashboard() {
             <h1 className="text-2xl font-bold text-orange-600">
               Admin Dashboard
             </h1>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 relative logout-menu-container">
               <span className="text-gray-700">Welcome, {user?.name}</span>
               <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                onClick={() => setShowLogoutMenu(!showLogoutMenu)}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 relative"
               >
-                Logout
+                Menu
               </button>
+              
+              {/* Dropdown Logout Menu */}
+              {showLogoutMenu && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
+                  >
+                    🚪 Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -784,3 +814,4 @@ function ProductFormModal({ product, onClose, onSave }) {
     </div>
   );
 }
+
