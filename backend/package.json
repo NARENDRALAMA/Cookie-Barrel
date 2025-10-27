@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "prod": "pm2 start ecosystem.config.js",
+    "stop": "pm2 stop cookie-barrel-api",
+    "restart": "pm2 restart cookie-barrel-api",
+    "logs": "pm2 logs cookie-barrel-api",
     "seed": "node scripts/start.js",
     "create-admin": "node scripts/createAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1"

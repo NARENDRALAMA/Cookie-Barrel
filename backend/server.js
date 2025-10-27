@@ -1,3 +1,6 @@
+// Load environment variables
+require('dotenv').config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -30,11 +33,15 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["https://your-frontend-domain.com"]
+        ? process.env.ALLOWED_ORIGINS
+          ? process.env.ALLOWED_ORIGINS.split(',')
+          : '*' // Allow all origins in production if not specified
         : [
             "http://localhost:3000",
             "http://localhost:3001",
             "http://localhost:5173",
+            "http://192.168.101.25:5001",
+            "*" // Allow all origins in development for mobile app testing
           ],
     credentials: true,
   })
@@ -107,10 +114,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = config.PORT;
+const HOST = '0.0.0.0'; // Bind to all network interfaces
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🌐 Network access: http://0.0.0.0:${PORT}/api/health`);
   console.log(`🌍 Environment: ${config.NODE_ENV}`);
 });
 
