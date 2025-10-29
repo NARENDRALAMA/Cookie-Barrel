@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 export default function ManagerDashboard() {
@@ -22,11 +22,10 @@ export default function ManagerDashboard() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showLogoutMenu, setShowLogoutMenu] = useState(false);
 
-  // Define functions BEFORE useEffect
-  const fetchOrders = async (token) => {
-    console.log("🔵 [AdminDashboard] Fetching orders...");
+  // Define functions with useCallback to prevent infinite loops
+  const fetchOrders = useCallback(async (token) => {
     try {
-      const response = await fetch("http://localhost:5001/api/admin/orders", {
+      const response = await fetch("/api/admin/orders", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -34,25 +33,18 @@ export default function ManagerDashboard() {
       });
 
       const data = await response.json();
-      console.log("🔵 [AdminDashboard] Orders response:", data);
       if (data.success) {
-        console.log(
-          "✅ [AdminDashboard] Orders fetched:",
-          data.data.length,
-          "orders"
-        );
         setOrders(data.data);
         setStats(data.stats);
       } else {
-        console.error("❌ [AdminDashboard] Orders fetch failed:", data.message);
+        console.error("Failed to fetch orders:", data.message);
       }
     } catch (error) {
-      console.error("❌ [AdminDashboard] Error fetching orders:", error);
+      console.error("Error fetching orders:", error);
     }
-  };
+  }, []);
 
-  const fetchProducts = async (token) => {
-    console.log("🔵 [AdminDashboard] Fetching products...");
+  const fetchProducts = useCallback(async (token) => {
     try {
       const response = await fetch("/api/admin/products", {
         headers: {
@@ -61,91 +53,60 @@ export default function ManagerDashboard() {
         },
       });
       const data = await response.json();
-      console.log("🔵 [AdminDashboard] Products response:", data);
       if (data.success) {
-        console.log(
-          "✅ [AdminDashboard] Products fetched:",
-          data.data.length,
-          "items"
-        );
         setProducts(data.data);
       } else {
-        console.error(
-          "❌ [AdminDashboard] Products fetch failed:",
-          data.message
-        );
+        console.error("Failed to fetch products:", data.message);
       }
     } catch (error) {
-      console.error("❌ [AdminDashboard] Error fetching products:", error);
+      console.error("Error fetching products:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    console.log("🔵 [AdminDashboard] Checking authentication...");
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
 
-    console.log("🔵 [AdminDashboard] Token exists:", !!token);
-    console.log("🔵 [AdminDashboard] User data exists:", !!userData);
-
     if (!token || !userData) {
-      console.log(
-        "❌ [AdminDashboard] No token or user data, redirecting to login"
-      );
       router.push("/manager-login");
       return;
     }
 
     try {
       const parsedUser = JSON.parse(userData);
-      console.log("🔵 [AdminDashboard] Parsed user:", parsedUser);
-      console.log("🔵 [AdminDashboard] User role:", parsedUser.role);
-
       setUser(parsedUser);
 
-      // STRICT: Only admin and manager roles allowed
+      // Check if user has admin/manager role
       if (parsedUser.role !== "manager" && parsedUser.role !== "admin") {
-        console.log(
-          "❌ [AdminDashboard] Access denied - not admin/manager. Role:",
-          parsedUser.role
-        );
-        // Clear unauthorized access
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
         alert("Access denied. Admin credentials required.");
         router.push("/login");
         return;
       }
 
-      console.log(
-        "✅ [AdminDashboard] Access granted for role:",
-        parsedUser.role
-      );
       setLoading(false);
       fetchOrders(token);
       fetchProducts(token);
     } catch (error) {
-      console.error("❌ [AdminDashboard] Error parsing user data:", error);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      console.error("Error parsing user data:", error);
       router.push("/manager-login");
     }
-  }, [router, fetchOrders, fetchProducts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Close logout menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showLogoutMenu && !event.target.closest('.logout-menu-container')) {
+      if (showLogoutMenu && !event.target.closest(".logout-menu-container")) {
         setShowLogoutMenu(false);
       }
     };
 
     if (showLogoutMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showLogoutMenu]);
 
@@ -245,8 +206,10 @@ export default function ManagerDashboard() {
   };
 
   const handleLogout = () => {
+    // Clear all sessions to prevent conflicts
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("cookieBarrelToken");
     router.push("/manager-login");
   };
 
@@ -260,17 +223,37 @@ export default function ManagerDashboard() {
               Admin Dashboard
             </h1>
             <div className="flex items-center space-x-4 relative logout-menu-container">
-              <span className="text-gray-700">Welcome, {user?.name}</span>
+              {/* User Info Button */}
               <button
                 onClick={() => setShowLogoutMenu(!showLogoutMenu)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 relative"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                Menu
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span className="hidden md:inline">{user?.name}</span>
               </button>
-              
+
               {/* Dropdown Logout Menu */}
               {showLogoutMenu && (
                 <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">{user?.email}</p>
+                  </div>
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
@@ -615,24 +598,12 @@ function ProductFormModal({ product, onClose, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(
-      "🔵 [ProductModal] Submitting form for:",
-      product ? "edit" : "add",
-      formData
-    );
     try {
       const token = localStorage.getItem("token");
       const url = product
         ? `/api/admin/products/${product._id}`
         : "/api/admin/products";
       const method = product ? "PATCH" : "POST";
-
-      console.log(
-        "🔵 [ProductModal] Making request to:",
-        url,
-        "Method:",
-        method
-      );
 
       const response = await fetch(url, {
         method,
@@ -644,17 +615,15 @@ function ProductFormModal({ product, onClose, onSave }) {
       });
 
       const data = await response.json();
-      console.log("🔵 [ProductModal] Response:", data);
 
       if (data.success) {
-        console.log("✅ [ProductModal] Successfully saved product");
         onSave();
       } else {
-        console.error("❌ [ProductModal] Error:", data.message);
+        console.error("Error:", data.message);
         alert("Error: " + data.message);
       }
     } catch (error) {
-      console.error("❌ [ProductModal] Network or other error:", error);
+      console.error("Network error:", error);
       alert("An error occurred. Please try again.");
     }
   };
@@ -814,4 +783,3 @@ function ProductFormModal({ product, onClose, onSave }) {
     </div>
   );
 }
-

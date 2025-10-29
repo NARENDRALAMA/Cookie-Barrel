@@ -13,6 +13,16 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("user");
 
+    // Clear any conflicting sessions from other auth systems
+    if (token && userData) {
+      // If we have Next.js auth data, clear React Router auth
+      localStorage.removeItem("cookieBarrelToken");
+    } else {
+      // If no Next.js auth, clear our data (React Router has the session)
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
+
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
@@ -39,6 +49,10 @@ export function AuthProvider({ children }) {
       const data = await response.json();
 
       if (data.success) {
+        // Clear any existing sessions to prevent conflicts
+        localStorage.removeItem("cookieBarrelToken");
+        // Don't clear token/user here yet - we'll set them below
+
         setUser(data.user);
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -65,6 +79,10 @@ export function AuthProvider({ children }) {
       const data = await response.json();
 
       if (data.success) {
+        // Clear any existing sessions to prevent conflicts
+        localStorage.removeItem("cookieBarrelToken");
+        // Don't clear token/user here yet - we'll set them below
+
         setUser(data.user);
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -83,8 +101,10 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setUser(null);
+    // Clear all sessions to prevent conflicts
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("cookieBarrelToken");
   };
 
   const getToken = () => {
@@ -120,4 +140,3 @@ export function useAuth() {
   }
   return context;
 }
-

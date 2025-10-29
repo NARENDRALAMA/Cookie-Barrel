@@ -62,8 +62,8 @@ export async function POST(request) {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        address: user.address,
+        phone: user.phone || "",
+        address: user.address || {},
         role: user.role,
       },
       token,
@@ -71,7 +71,7 @@ export async function POST(request) {
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
-      { success: false, message: "Internal server error" },
+      { success: false, message: `Internal server error: ${error.message}` },
       { status: 500 }
     );
   }

@@ -17,7 +17,7 @@ export default function ManagerLogin() {
 
     try {
       console.log("Attempting login with:", { email });
-      const response = await fetch("http://localhost:5001/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,6 +38,9 @@ export default function ManagerLogin() {
           (data.user.role === "manager" || data.user.role === "admin")
         ) {
           console.log("User role is admin/manager, storing credentials...");
+          // Clear any existing user sessions to prevent conflicts
+          localStorage.removeItem("cookieBarrelToken");
+
           // Store token and user data
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));

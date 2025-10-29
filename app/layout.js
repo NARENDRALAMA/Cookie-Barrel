@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
-import Navbar from "./components/Navbar";
+import NavbarWrapper from "./components/NavbarWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <CartProvider>
             <div className="min-h-screen bg-gray-50">
-              <Navbar />
+              <NavbarWrapper />
               <main className="pt-16">{children}</main>
             </div>
           </CartProvider>
@@ -27,4 +27,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

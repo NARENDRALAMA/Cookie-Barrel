@@ -22,12 +22,10 @@ async function verifyManagerToken(request) {
 // Update product
 export async function PATCH(request, { params }) {
   try {
-    console.log("🟢 [API] Updating product, params:", params);
     await connectDB();
 
     const user = await verifyManagerToken(request);
     if (!user) {
-      console.error("❌ [API] Unauthorized - no valid token");
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 }
@@ -35,9 +33,7 @@ export async function PATCH(request, { params }) {
     }
 
     const { id } = params;
-    console.log("🟢 [API] Product ID:", id);
     const body = await request.json();
-    console.log("🟢 [API] Update data:", body);
 
     // Find and update product
     const product = await Product.findByIdAndUpdate(id, body, {
@@ -46,22 +42,19 @@ export async function PATCH(request, { params }) {
     });
 
     if (!product) {
-      console.error("❌ [API] Product not found:", id);
       return NextResponse.json(
         { success: false, message: "Product not found" },
         { status: 404 }
       );
     }
 
-    console.log("✅ [API] Product updated successfully:", product._id);
     return NextResponse.json({
       success: true,
       message: "Product updated successfully",
       data: product,
     });
   } catch (error) {
-    console.error("❌ [API] Update product error:", error);
-    console.error("❌ [API] Error details:", error.message);
+    console.error("Update product error:", error);
     return NextResponse.json(
       {
         success: false,

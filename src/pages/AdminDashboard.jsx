@@ -143,15 +143,15 @@ const AdminDashboard = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case "ordered":
-        return <Clock className="h-4 w-4" />;
+        return <Clock className="w-4 h-4" />;
       case "preparing":
-        return <AlertCircle className="h-4 w-4" />;
+        return <AlertCircle className="w-4 h-4" />;
       case "ready":
-        return <CheckCircle className="h-4 w-4" />;
+        return <CheckCircle className="w-4 h-4" />;
       case "delivered":
-        return <CheckCircle className="h-4 w-4" />;
+        return <CheckCircle className="w-4 h-4" />;
       default:
-        return <Clock className="h-4 w-4" />;
+        return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -186,7 +186,7 @@ const AdminDashboard = () => {
     {
       title: "Total Orders",
       value: stats.totalOrders,
-      icon: <Package className="h-8 w-8" />,
+      icon: <Package className="w-8 h-8" />,
       color: "from-blue-500 to-blue-600",
       bgColor: "bg-blue-100",
       change: "+12%",
@@ -194,7 +194,7 @@ const AdminDashboard = () => {
     {
       title: "Total Revenue",
       value: `$${stats.totalRevenue.toFixed(2)}`,
-      icon: <DollarSign className="h-8 w-8" />,
+      icon: <DollarSign className="w-8 h-8" />,
       color: "from-green-500 to-green-600",
       bgColor: "bg-green-100",
       change: "+8.5%",
@@ -202,7 +202,7 @@ const AdminDashboard = () => {
     {
       title: "Active Orders",
       value: stats.activeOrders,
-      icon: <Clock className="h-8 w-8" />,
+      icon: <Clock className="w-8 h-8" />,
       color: "from-yellow-500 to-yellow-600",
       bgColor: "bg-yellow-100",
       change: "+3",
@@ -210,7 +210,7 @@ const AdminDashboard = () => {
     {
       title: "Total Customers",
       value: stats.totalCustomers,
-      icon: <Users className="h-8 w-8" />,
+      icon: <Users className="w-8 h-8" />,
       color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-100",
       change: "+5",
@@ -219,32 +219,32 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-orange-50/50 via-white to-red-50/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 animate-fadeIn">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center">
+              <h1 className="flex items-center mb-2 text-4xl font-bold text-gray-900">
                 <span className="gradient-text">Admin Dashboard</span>
-                <Sparkles className="h-8 w-8 ml-3 text-orange-600" />
+                <Sparkles className="w-8 h-8 ml-3 text-orange-600" />
               </h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-lg text-gray-600">
                 Manage orders, customers, and business operations
               </p>
             </div>
-            <button className="btn-primary flex items-center space-x-2">
-              <Download className="h-5 w-5" />
+            <button className="flex items-center space-x-2 btn-primary">
+              <Download className="w-5 h-5" />
               <span>Export Data</span>
             </button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
           {statCards.map((stat, index) => (
             <div
               key={index}
-              className="card card-hover relative overflow-hidden"
+              className="relative overflow-hidden card card-hover"
             >
               <div className="absolute top-0 right-0 w-32 h-32 transform translate-x-8 -translate-y-8 opacity-10">
                 <div
@@ -260,12 +260,12 @@ const AdminDashboard = () => {
                       {stat.icon}
                     </div>
                   </div>
-                  <span className="text-green-600 font-semibold text-sm flex items-center">
-                    <TrendingUp className="h-4 w-4 mr-1" />
+                  <span className="flex items-center text-sm font-semibold text-green-600">
+                    <TrendingUp className="w-4 h-4 mr-1" />
                     {stat.change}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-gray-600 mb-1">
+                <p className="mb-1 text-sm font-medium text-gray-600">
                   {stat.title}
                 </p>
                 <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
@@ -275,23 +275,23 @@ const AdminDashboard = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="glass rounded-2xl shadow-xl mb-8 overflow-hidden">
-          <nav className="flex space-x-1 p-2">
+        <div className="mb-8 overflow-hidden shadow-xl glass rounded-2xl">
+          <nav className="flex p-2 space-x-1">
             {[
               {
                 id: "overview",
                 label: "Overview",
-                icon: <BarChart3 className="h-5 w-5" />,
+                icon: <BarChart3 className="w-5 h-5" />,
               },
               {
                 id: "orders",
                 label: "Orders",
-                icon: <Package className="h-5 w-5" />,
+                icon: <Package className="w-5 h-5" />,
               },
               {
                 id: "customers",
                 label: "Customers",
-                icon: <Users className="h-5 w-5" />,
+                icon: <Users className="w-5 h-5" />,
               },
             ].map((tab) => (
               <button
@@ -314,33 +314,33 @@ const AdminDashboard = () => {
         {activeTab === "overview" && (
           <div className="space-y-6">
             {/* Recent Orders Table */}
-            <div className="glass rounded-3xl p-8 shadow-xl">
+            <div className="p-8 shadow-xl glass rounded-3xl">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
                   Recent Orders
                 </h2>
-                <button className="text-orange-600 hover:text-orange-700 font-semibold text-sm flex items-center">
+                <button className="flex items-center text-sm font-semibold text-orange-600 hover:text-orange-700">
                   View All
-                  <ChevronDown className="h-4 w-4 ml-1" />
+                  <ChevronDown className="w-4 h-4 ml-1" />
                 </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full">
                   <thead>
                     <tr className="border-b border-gray-200">
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                         Order
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                         Customer
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                         Total
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                         Actions
                       </th>
                     </tr>
@@ -349,7 +349,7 @@ const AdminDashboard = () => {
                     {orders.slice(0, 5).map((order) => (
                       <tr
                         key={order.id}
-                        className="hover:bg-orange-50/50 transition-colors"
+                        className="transition-colors hover:bg-orange-50/50"
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-bold text-gray-900">
@@ -386,11 +386,11 @@ const AdminDashboard = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex space-x-2">
-                            <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                              <Eye className="h-4 w-4" />
+                            <button className="p-2 text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
+                              <Eye className="w-4 h-4" />
                             </button>
-                            <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                              <Edit className="h-4 w-4" />
+                            <button className="p-2 text-green-600 transition-colors rounded-lg hover:bg-green-50">
+                              <Edit className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -404,24 +404,24 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === "orders" && (
-          <div className="glass rounded-3xl p-8 shadow-xl">
+          <div className="p-8 shadow-xl glass rounded-3xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
                 Order Management
               </h2>
               <div className="flex space-x-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     type="text"
                     placeholder="Search orders..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
+                    className="py-2 pl-10 pr-4 transition-all border-2 border-gray-200 outline-none rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
                   />
                 </div>
-                <button className="flex items-center space-x-2 px-4 py-2 border-2 border-gray-200 rounded-xl hover:border-orange-500 transition-colors">
-                  <Filter className="h-5 w-5" />
+                <button className="flex items-center px-4 py-2 space-x-2 transition-colors border-2 border-gray-200 rounded-xl hover:border-orange-500">
+                  <Filter className="w-5 h-5" />
                   <span className="font-medium">Filter</span>
                 </button>
               </div>
@@ -430,19 +430,19 @@ const AdminDashboard = () => {
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Order Details
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Customer
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Total
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Actions
                     </th>
                   </tr>
@@ -451,16 +451,16 @@ const AdminDashboard = () => {
                   {orders.map((order) => (
                     <tr
                       key={order.id}
-                      className="hover:bg-orange-50/50 transition-colors"
+                      className="transition-colors hover:bg-orange-50/50"
                     >
                       <td className="px-6 py-4">
                         <div className="text-sm font-bold text-gray-900">
                           {order.orderNumber}
                         </div>
-                        <div className="text-sm text-gray-500 mb-1">
+                        <div className="mb-1 text-sm text-gray-500">
                           {order.date}
                         </div>
-                        <div className="text-xs text-gray-600 space-y-1">
+                        <div className="space-y-1 text-xs text-gray-600">
                           {order.items.map((item, index) => (
                             <div key={index} className="flex items-center">
                               <span className="inline-block w-1.5 h-1.5 bg-orange-600 rounded-full mr-2"></span>
@@ -483,7 +483,7 @@ const AdminDashboard = () => {
                           onChange={(e) =>
                             updateOrderStatus(order.id, e.target.value)
                           }
-                          className="px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none cursor-pointer"
+                          className="px-3 py-2 text-sm font-semibold transition-all border-2 border-gray-200 rounded-lg outline-none cursor-pointer focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
                         >
                           <option value="ordered">Ordered</option>
                           <option value="preparing">Preparing</option>
@@ -498,17 +498,17 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex space-x-2">
-                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                            <Eye className="h-4 w-4" />
+                          <button className="p-2 text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
+                            <Eye className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                            <Edit className="h-4 w-4" />
+                          <button className="p-2 text-green-600 transition-colors rounded-lg hover:bg-green-50">
+                            <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => deleteOrder(order.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-red-600 transition-colors rounded-lg hover:bg-red-50"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -521,17 +521,17 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === "customers" && (
-          <div className="glass rounded-3xl p-8 shadow-xl">
+          <div className="p-8 shadow-xl glass rounded-3xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
                 Customer Management
               </h2>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                 <input
                   type="text"
                   placeholder="Search customers..."
-                  className="pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
+                  className="py-2 pl-10 pr-4 transition-all border-2 border-gray-200 outline-none rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
                 />
               </div>
             </div>
@@ -539,19 +539,19 @@ const AdminDashboard = () => {
               <table className="min-w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Customer
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Contact
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Orders
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Total Spent
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-xs font-bold tracking-wider text-left text-gray-600 uppercase">
                       Actions
                     </th>
                   </tr>
@@ -560,11 +560,11 @@ const AdminDashboard = () => {
                   {users.map((user) => (
                     <tr
                       key={user.id}
-                      className="hover:bg-orange-50/50 transition-colors"
+                      className="transition-colors hover:bg-orange-50/50"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gradient-to-r from-orange-600 to-red-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                          <div className="flex items-center justify-center w-10 h-10 mr-3 font-bold text-white rounded-full bg-gradient-to-r from-orange-600 to-red-600">
                             {user.name.charAt(0)}
                           </div>
                           <div className="text-sm font-semibold text-gray-900">
@@ -581,7 +581,7 @@ const AdminDashboard = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                        <span className="inline-flex items-center px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
                           {user.orders} orders
                         </span>
                       </td>
@@ -592,17 +592,17 @@ const AdminDashboard = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex space-x-2">
-                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                            <Eye className="h-4 w-4" />
+                          <button className="p-2 text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
+                            <Eye className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                            <Edit className="h-4 w-4" />
+                          <button className="p-2 text-green-600 transition-colors rounded-lg hover:bg-green-50">
+                            <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => deleteUser(user.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-red-600 transition-colors rounded-lg hover:bg-red-50"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
