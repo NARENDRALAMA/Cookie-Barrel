@@ -61,6 +61,34 @@ const orderSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    deliveryAddress: {
+      street: {
+        type: String,
+        trim: true,
+      },
+      city: {
+        type: String,
+        trim: true,
+      },
+      state: {
+        type: String,
+        trim: true,
+      },
+      zipCode: {
+        type: String,
+        trim: true,
+      },
+    },
+    contactInfo: {
+      phone: {
+        type: String,
+        trim: true,
+      },
+      email: {
+        type: String,
+        trim: true,
+      },
+    },
     estimatedDelivery: {
       type: Date,
     },
@@ -76,7 +104,10 @@ const orderSchema = new mongoose.Schema(
 // Generate order number before saving
 orderSchema.pre("save", function (next) {
   if (!this.orderNumber) {
-    this.orderNumber = "CB" + Date.now().toString().slice(-6);
+    // Generate order number with timestamp + random suffix to ensure uniqueness
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    this.orderNumber = "CB" + timestamp + random;
   }
   next();
 });
