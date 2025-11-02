@@ -45,15 +45,36 @@ const OrderTracking = () => {
     setOrder(null);
 
     try {
-      const response = await fetch(`/api/orders?orderNumber=${orderNumber}`);
+      const token = getToken();
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      
+      // Add authorization header if user is authenticated
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      // Try to fetch order - if not authenticated, show message to login
+      const response = await fetch(
+        `/api/orders?orderNumber=${encodeURIComponent(orderNumber.trim().toUpperCase())}`,
+        { headers }
+      );
+
       const data = await response.json();
 
-      if (data.success && data.data.length > 0) {
+      if (response.status === 401) {
+        setError("Please login to track your orders. You can only track your own orders.");
+        return;
+      }
+
+      if (data.success && data.data && data.data.length > 0) {
         setOrder(data.data[0]);
       } else {
-        setError("Order not found. Please check your order number.");
+        setError("Order not found. Please check your order number and make sure you're logged in with the account that placed the order.");
       }
     } catch (error) {
+      console.error("Error tracking order:", error);
       setError("Failed to fetch order. Please try again.");
     } finally {
       setLoading(false);
@@ -144,31 +165,47 @@ const OrderTracking = () => {
                 Order Items
               </h3>
               <div className="space-y-3">
-                {order.items.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-4">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900">
-                        {item.product.name}
-                      </h4>
-                      <p className="text-gray-600">Quantity: {item.quantity}</p>
-                      {item.specialInstructions && (
-                        <p className="text-sm text-gray-500">
-                          Note: {item.specialInstructions}
+                {order.items.map((item, index) => {
+                  const isUrl = item.product?.image && typeof item.product.image === "string" && item.product.image.startsWith("http");
+                  const isEmoji = item.product?.image && typeof item.product.image === "string" && item.product.image.length <= 5;
+                  
+                  return (
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+                        {isUrl ? (
+                          <img
+                            src={item.product.image}
+                            alt={item.product.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex";
+                            }}
+                          />
+                        ) : null}
+                        <div className={`text-3xl ${isUrl ? "hidden" : ""}`}>
+                          {isEmoji ? item.product.image : "🍪"}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">
+                          {item.product?.name || "Product"}
+                        </h4>
+                        <p className="text-gray-600">Quantity: {item.quantity}</p>
+                        {item.specialInstructions && (
+                          <p className="text-sm text-gray-500">
+                            Note: {item.specialInstructions}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900">
+                          ${((item.price || 0) * (item.quantity || 0)).toFixed(2)}
                         </p>
-                      )}
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-medium text-gray-900">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -177,23 +214,23 @@ const OrderTracking = () => {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${order.totalAmount.toFixed(2)}</span>
+                  <span>${(order.totalAmount || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
                   <span>
-                    {order.deliveryFee === 0
+                    {(order.deliveryFee || 0) === 0
                       ? "Free"
-                      : `$${order.deliveryFee.toFixed(2)}`}
+                      : `$${(order.deliveryFee || 0).toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>${order.tax.toFixed(2)}</span>
+                  <span>${(order.tax || 0).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total</span>
-                  <span>${order.finalAmount.toFixed(2)}</span>
+                  <span>${(order.finalAmount || order.totalAmount || 0).toFixed(2)}</span>
                 </div>
               </div>
             </div>

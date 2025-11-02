@@ -33,9 +33,20 @@ const Menu = () => {
     fetchProducts();
   }, [selectedCategory, searchTerm]);
 
-  const fetchProducts = async () => {
+  // Auto-refresh products every 5 seconds to show real-time updates from admin
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchProducts(false); // Don't show loading state on auto-refresh
+    }, 5000); // Refresh every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [selectedCategory, searchTerm]);
+
+  const fetchProducts = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       const params = new URLSearchParams();
       if (selectedCategory !== "all")
         params.append("category", selectedCategory);
@@ -45,12 +56,24 @@ const Menu = () => {
       const data = await response.json();
 
       if (data.success) {
-        setProducts(data.data);
+        // Sort products to prioritize featured, popular, then new items
+        const sortedProducts = (data.data || []).sort((a, b) => {
+          if (a.isFeatured && !b.isFeatured) return -1;
+          if (!a.isFeatured && b.isFeatured) return 1;
+          if (a.popular && !b.popular) return -1;
+          if (!a.popular && b.popular) return 1;
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return 0;
+        });
+        setProducts(sortedProducts);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   };
 
@@ -187,11 +210,30 @@ const Menu = () => {
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  {product.isFeatured && (
-                    <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                      ⭐ Featured
-                    </div>
-                  )}
+                  {/* Badges - Left side, show all applicable badges in priority order */}
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-2 z-10 max-w-[60%]">
+                    {/* Priority 1: Featured (highest priority) */}
+                    {product.isFeatured && (
+                      <div className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center space-x-1 animate-pulse">
+                        <span>⭐</span>
+                        <span>Featured</span>
+                      </div>
+                    )}
+                    {/* Priority 2: Popular */}
+                    {product.popular && (
+                      <div className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center space-x-1">
+                        <span>🔥</span>
+                        <span>Popular</span>
+                      </div>
+                    )}
+                    {/* Priority 3: New */}
+                    {product.isNew && (
+                      <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center space-x-1">
+                        <span>✨</span>
+                        <span>New</span>
+                      </div>
+                    )}
+                  </div>
                   {/* Stock Badge */}
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-semibold shadow-md">
                     {product.stock} left

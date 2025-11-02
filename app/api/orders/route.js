@@ -26,19 +26,43 @@ export async function GET(request) {
 
     const user = await verifyToken(request);
     if (!user) {
+      console.log("GET /api/orders - No user token found");
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
+        { success: false, message: "Unauthorized. Please login." },
         { status: 401 }
       );
     }
 
+    console.log("GET /api/orders - User authenticated:", user.userId || user.id);
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
+    const orderNumber = searchParams.get("orderNumber");
     const page = parseInt(searchParams.get("page")) || 1;
-    const limit = parseInt(searchParams.get("limit")) || 10;
+    const limit = parseInt(searchParams.get("limit")) || 100; // Show more orders by default
 
-    // Build query
-    let query = { customer: user.userId };
+    // Build query - JWT contains userId which is the MongoDB ObjectId as string
+    // We need to convert it to ObjectId for proper matching
+    const mongoose = (await import("mongoose")).default;
+    const userId = user.userId || user.id;
+    
+    // Try to convert string to ObjectId if needed, otherwise use as-is
+    let customerId;
+    try {
+      customerId = mongoose.Types.ObjectId.isValid(userId) 
+        ? new mongoose.Types.ObjectId(userId) 
+        : userId;
+    } catch {
+      customerId = userId;
+    }
+    
+    let query = { customer: customerId };
+    
+    // If orderNumber is provided, search by orderNumber (user can only see their own orders)
+    if (orderNumber) {
+      query.orderNumber = orderNumber.toUpperCase(); // Ensure consistent format (CB000001)
+    }
+    
     if (status) {
       query.status = status;
     }
@@ -48,7 +72,8 @@ export async function GET(request) {
 
     // Get orders with populated product details
     const orders = await Order.find(query)
-      .populate("items.product", "name image price")
+      .populate("items.product", "name image price description")
+      .populate("customer", "name email phone")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -56,6 +81,8 @@ export async function GET(request) {
 
     // Get total count
     const total = await Order.countDocuments(query);
+
+    console.log(`GET /api/orders - Found ${orders.length} orders for user ${user.userId || user.id}`);
 
     return NextResponse.json({
       success: true,
@@ -70,7 +97,7 @@ export async function GET(request) {
   } catch (error) {
     console.error("Get orders error:", error);
     return NextResponse.json(
-      { success: false, message: "Internal server error" },
+      { success: false, message: `Internal server error: ${error.message}` },
       { status: 500 }
     );
   }

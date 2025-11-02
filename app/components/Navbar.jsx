@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import { ShoppingCart, User, Menu as MenuIcon, X, Cookie } from "lucide-react";
+import { ShoppingCart, User, Menu as MenuIcon, X, Cookie, Package } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -223,6 +223,14 @@ const Navbar = () => {
                           </span>
                         )}
                       </div>
+                      <Link
+                        href="/my-orders"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+                      >
+                        <Package className="w-4 h-4 mr-3 text-gray-400 group-hover:text-orange-600" />
+                        <span>My Orders</span>
+                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
@@ -322,6 +330,19 @@ const Navbar = () => {
               >
                 Track Order
               </Link>
+              {displayUser && !isAdminLoggedIn && (
+                <Link
+                  href="/my-orders"
+                  className={`block px-3 py-2 ${
+                    isAdminLoggedIn
+                      ? "text-white hover:text-orange-200"
+                      : "text-gray-700 hover:text-orange-600"
+                  } transition-colors font-medium`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  My Orders
+                </Link>
+              )}
               {!isAdminLoggedIn && !user && (
                 <Link
                   href="/manager-login"

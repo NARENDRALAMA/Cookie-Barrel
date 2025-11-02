@@ -71,6 +71,8 @@ export async function POST(request) {
       isAvailable,
       stock,
       popular,
+      isNew,
+      isFeatured,
     } = body;
 
     // Validation
@@ -91,6 +93,8 @@ export async function POST(request) {
       isAvailable: isAvailable !== undefined ? isAvailable : true,
       stock: stock !== undefined ? stock : 100,
       popular: popular || false,
+      isNew: isNew || false,
+      isFeatured: isFeatured || false,
     });
 
     await product.save();

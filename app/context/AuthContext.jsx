@@ -121,7 +121,8 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
-    loading,
+    loading: loading, // Renamed for clarity
+    authLoading: loading, // Expose as authLoading as well
     login,
     register,
     logout,

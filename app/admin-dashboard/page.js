@@ -151,7 +151,7 @@ export default function ManagerDashboard() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5001/api/admin/orders/${orderId}`,
+        `/api/admin/orders/${orderId}`,
         {
           method: "PATCH",
           headers: {
@@ -166,7 +166,7 @@ export default function ManagerDashboard() {
       if (data.success) {
         // Refresh orders list
         const refreshResponse = await fetch(
-          "http://localhost:5001/api/admin/orders",
+          "/api/admin/orders",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -180,6 +180,8 @@ export default function ManagerDashboard() {
           setStats(refreshData.stats);
         }
         setSelectedOrder(null);
+        // Show success message
+        alert(`Order status updated to ${newStatus}!`);
       } else {
         alert("Failed to update order: " + data.message);
       }
@@ -222,47 +224,6 @@ export default function ManagerDashboard() {
             <h1 className="text-2xl font-bold text-orange-600">
               Admin Dashboard
             </h1>
-            <div className="flex items-center space-x-4 relative logout-menu-container">
-              {/* User Info Button */}
-              <button
-                onClick={() => setShowLogoutMenu(!showLogoutMenu)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span className="hidden md:inline">{user?.name}</span>
-              </button>
-
-              {/* Dropdown Logout Menu */}
-              {showLogoutMenu && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900">
-                      {user?.name}
-                    </p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
-                  >
-                    🚪 Logout
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </header>
@@ -594,6 +555,8 @@ function ProductFormModal({ product, onClose, onSave }) {
     isAvailable: product?.isAvailable ?? true,
     stock: product?.stock || 100,
     popular: product?.popular || false,
+    isNew: product?.isNew || false,
+    isFeatured: product?.isFeatured || false,
   });
 
   const handleSubmit = async (e) => {
@@ -739,29 +702,56 @@ function ProductFormModal({ product, onClose, onSave }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={formData.isAvailable}
-              onChange={(e) =>
-                setFormData({ ...formData, isAvailable: e.target.checked })
-              }
-              className="mr-2"
-            />
-            Available
-          </label>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={formData.popular}
-              onChange={(e) =>
-                setFormData({ ...formData, popular: e.target.checked })
-              }
-              className="mr-2"
-            />
-            Popular
-          </label>
+        <div className="space-y-3">
+          <div className="flex items-center gap-4 flex-wrap">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isAvailable}
+                onChange={(e) =>
+                  setFormData({ ...formData, isAvailable: e.target.checked })
+                }
+                className="mr-2"
+              />
+              Available
+            </label>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.popular}
+                onChange={(e) =>
+                  setFormData({ ...formData, popular: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <span className="px-2 py-1 text-xs font-semibold rounded bg-red-500 text-white">Popular</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isFeatured}
+                onChange={(e) =>
+                  setFormData({ ...formData, isFeatured: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <span className="px-2 py-1 text-xs font-semibold rounded bg-gradient-to-r from-orange-600 to-red-600 text-white">Featured</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isNew}
+                onChange={(e) =>
+                  setFormData({ ...formData, isNew: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <span className="px-2 py-1 text-xs font-semibold rounded bg-green-500 text-white">New</span>
+            </label>
+          </div>
+          <p className="text-xs text-gray-500">
+            Select badges to highlight this dish. Multiple badges can be selected.
+          </p>
         </div>
 
         <div className="flex gap-4">

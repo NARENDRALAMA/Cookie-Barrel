@@ -297,7 +297,11 @@ const Home = () => {
                 badge: "Trending",
               },
             ].map((product, index) => (
-              <div key={index} className="product-card group">
+              <Link
+                key={index}
+                href="/menu"
+                className="product-card group cursor-pointer hover:shadow-2xl transition-all duration-300"
+              >
                 <div className="p-6">
                   <div className="text-7xl mb-4 text-center group-hover:scale-110 transition-transform duration-300">
                     {product.emoji}
@@ -309,20 +313,25 @@ const Home = () => {
                           ? "badge-popular"
                           : product.badge === "New"
                           ? "badge-new"
+                          : product.badge === "Featured"
+                          ? "badge-featured"
                           : "badge-popular"
-                      }`}
+                      } flex items-center justify-center space-x-1 inline-flex`}
                     >
-                      {product.badge}
+                      <span>
+                        {product.badge === "Popular" ? "🔥" : product.badge === "New" ? "✨" : product.badge === "Featured" ? "⭐" : "🔥"}
+                      </span>
+                      <span>{product.badge}</span>
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 text-center group-hover:text-orange-600 transition-colors">
                     {product.name}
                   </h3>
                   <p className="text-gray-600 text-center mb-4">
                     {product.desc}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
