@@ -46,7 +46,8 @@ router.get('/', async (req, res) => {
         sortOption = { name: 1 };
     }
     
-    const products = await Product.find(query).sort(sortOption);
+    // const products = await Product.find(query).sort(sortOption);
+    const products = await Product.find();
     
     res.json({
       success: true,

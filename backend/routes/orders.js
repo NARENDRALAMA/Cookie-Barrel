@@ -11,28 +11,50 @@ const router = express.Router();
 // @access  Private
 router.post('/', auth, async (req, res) => {
   try {
-    const { items, notes, paymentMethod } = req.body;
+    console.log('=== Create Order Request ===');
+    console.log('User:', req.user ? { id: req.user._id, email: req.user.email } : 'No user');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
     
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: 'Order must contain at least one item' });
+    const { items, paymentMethod, deliveryAddress, contactInfo, specialInstructions, notes } = req.body;
+    
+    // Validation
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, message: 'Order items are required' });
     }
     
-    let subtotal = 0;
+    if (!deliveryAddress || !contactInfo || !paymentMethod) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Delivery address, contact info, and payment method are required' 
+      });
+    }
+    
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+    
+    // Calculate total amount and validate items
+    let totalAmount = 0;
     const orderItems = [];
     
-    // Validate and calculate order items
     for (const item of items) {
       const product = await Product.findById(item.productId);
-      if (!product) {
-        return res.status(400).json({ message: `Product ${item.productId} not found` });
+      if (!product || !product.available) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Product ${item.productId} not available` 
+        });
       }
       
-      if (!product.available) {
-        return res.status(400).json({ message: `Product ${product.name} is not available` });
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Insufficient stock for ${product.name}` 
+        });
       }
       
       const itemTotal = product.price * item.quantity;
-      subtotal += itemTotal;
+      totalAmount += itemTotal;
       
       orderItems.push({
         product: product._id,
@@ -41,29 +63,77 @@ router.post('/', auth, async (req, res) => {
       });
     }
     
-    const order = new Order({
+    // Calculate delivery fee (free for orders over $50, otherwise $5)
+    const deliveryFee = totalAmount >= 50 ? 0 : 5;
+    
+    // Calculate tax (10% tax)
+    const tax = totalAmount * 0.1;
+    
+    const finalAmount = totalAmount + deliveryFee + tax;
+    
+    // Generate order number (count-based like Next.js)
+    const count = await Order.countDocuments();
+    const orderNumber = `CB${String(count + 1).padStart(6, '0')}`;
+    
+    console.log('Order calculation:', { totalAmount, deliveryFee, tax, finalAmount, orderNumber });
+    
+    // Create order with all fields
+    const orderData = {
+      orderNumber,
       user: req.user._id,
       items: orderItems,
-      subtotal,
-      total: subtotal, // Will be updated if discount applied
-      notes,
+      subtotal: totalAmount,
+      discount: 0,
+      total: finalAmount,
       paymentMethod: paymentMethod || 'cash',
+      paymentStatus: 'pending',
+      notes: notes || specialInstructions || '',
+      deliveryAddress: {
+        street: deliveryAddress.street || '',
+        city: deliveryAddress.city || '',
+        state: deliveryAddress.state || '',
+        zipCode: deliveryAddress.zipCode || ''
+      },
+      contactInfo: {
+        phone: contactInfo.phone || '',
+        email: contactInfo.email || ''
+      },
       estimatedDelivery: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
-    });
+    };
     
+    console.log('Order data before save:', JSON.stringify(orderData, null, 2));
+    
+    const order = new Order(orderData);
     await order.save();
     
-    // Populate order with product details
-    await order.populate('items.product', 'name description image');
+    // Update product stock
+    for (const item of orderItems) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stock: -item.quantity }
+      });
+    }
+    
+    // Populate the order for response
+    const populatedOrder = await Order.findById(order._id)
+      .populate('items.product', 'name description image');
     
     res.status(201).json({
       success: true,
       message: 'Order created successfully',
-      data: order
+      data: populatedOrder
     });
   } catch (error) {
     console.error('Create order error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
@@ -72,17 +142,26 @@ router.post('/', auth, async (req, res) => {
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
+    console.log('=== Get Orders Request ===');
+    console.log('User:', req.user ? { id: req.user._id, email: req.user.email, isAdmin: req.user.isAdmin } : 'No user');
+    
     let query = {};
     
     // If not admin, only show user's orders
     if (!req.user.isAdmin) {
       query.user = req.user._id;
+      console.log('Fetching orders for user:', req.user._id);
+    } else {
+      console.log('Admin fetching all orders');
     }
     
     const orders = await Order.find(query)
       .populate('user', 'name email phone')
-      .populate('items.product', 'name description image')
-      .sort({ createdAt: -1 });
+      .populate('items.product', 'name description image price')
+      .sort({ createdAt: -1 }) // Latest first
+      .lean();
+    
+    console.log(`Found ${orders.length} orders`);
     
     res.json({
       success: true,
@@ -91,7 +170,15 @@ router.get('/', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Get orders error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack
+    });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
